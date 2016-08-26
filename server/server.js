@@ -73,9 +73,7 @@ io.on('connect', (socket) => {
   // The socket connection will be passed to the relevant Worker object
   // so that it can emit messages directly.
   socket.on('userReady', (readyMessage) => {
-    console.log('USER READY MESSAGE:', readyMessage);
     console.log('User ready for project:', readyMessage.projectId);
-
     pc.userReady(readyMessage, jobCallback);
 
     io.emit('updateAllProjects', pc.getUpdateAllProjects());
@@ -99,7 +97,7 @@ io.on('connect', (socket) => {
     pc.userJobDone(completedJob, jobCallback);
     io.emit('updateAllProjects', pc.getUpdateAllProjects());
   });
-
+  
   // 'createProject' event handler
   // Passes an 'options' object to the ProjectController
   // Options must have the form that's defined in the Project constructor script, specifically:
@@ -115,7 +113,6 @@ io.on('connect', (socket) => {
   // The server will pass the io object to the ProjectController to directly
   // handle the sending of socket messages
   socket.on('createProject', (project) => {
-    // console.log('RECEIVED NEW PROJECT: ', project);
     if (pc.createProject(project)) {
       console.log('Successfully created a new project');
       io.emit('updateAllProjects', pc.getUpdateAllProjects());
@@ -123,11 +120,9 @@ io.on('connect', (socket) => {
     } else {
       console.log('Error creating project');
     }
-
   });
 
   socket.on('pendProject', (project) => {
-    console.log('RECEIVED PENDING PROJECT', project);
     if (pc.pendProject(project)) {
       io.emit('updatePendingProjects', pc.getPendingProjects());
     } else {
@@ -171,11 +166,10 @@ io.on('connect', (socket) => {
       }, 4000);
     } 
   });
-
 });
 
-// TESTS
-// const irisOptions = require('./projects/iris.js');
-// const mnistOptions = require('./projects/mnist.js');
-// pc.createProject(irisOptions);
-// pc.createProject(mnistOptions);
+// PRELOADED PROJECTS FOR DEMO PURPOSES
+const irisOptions = require('./projects/iris.js');
+const mnistOptions = require('./projects/mnist.js');
+pc.createProject(irisOptions);
+pc.createProject(mnistOptions);
